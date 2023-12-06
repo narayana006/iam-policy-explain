@@ -1,0 +1,38 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadAssets",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::example-site-assets/public/*"
+    },
+    {
+      "Sid": "PartnerUpload",
+      "Effect": "Allow",
+      "Principal": {"AWS": "arn:aws:iam::210987654321:role/partner-uploader"},
+      "Action": ["s3:PutObject", "s3:AbortMultipartUpload"],
+      "Resource": "arn:aws:s3:::example-site-assets/incoming/*"
+    },
+    {
+      "Sid": "OrgWideList",
+      "Effect": "Allow",
+      "Principal": {"AWS": "*"},
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::example-site-assets",
+      "Condition": {"StringEquals": {"aws:PrincipalOrgID": "o-exampleorgid"}}
+    },
+    {
+      "Sid": "DenyInsecureTransport",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::example-site-assets",
+        "arn:aws:s3:::example-site-assets/*"
+      ],
+      "Condition": {"Bool": {"aws:SecureTransport": "false"}}
+    }
+  ]
+}
